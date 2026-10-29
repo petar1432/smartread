@@ -1,0 +1,24 @@
+# Started every morning by the private usage server (Cloudflare); can also be started by hand.
+# E-mails the author how SmartRead was used yesterday.
+name: Dnevni izvještaj o korištenju
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pošalji izvještaj e-mailom
+        env:
+          STATS_URL: ${{ secrets.STATS_URL }}
+          STATS_KEY: ${{ secrets.STATS_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: python3 .github/scripts/report_usage.py
