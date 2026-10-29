@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="hr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartRead</title>
+  <meta name="description" content="SmartRead objašnjava označeni tekst i dijelove zaslona uz kontekst tvoje knjige.">
+  <style>
+    :root { --text: #1d1d1f; --muted: #6e6e73; --accent: #2457d6; --card: #f5f5f7; --background: #ffffff; }
+    @media (prefers-color-scheme: dark) {
+      :root { --text: #f5f5f7; --muted: #a1a1a6; --accent: #6e9bff; --card: #1c1c1e; --background: #000000; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--background); color: var(--text);
+      font: 17px/1.55 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 64px 16px; }
+    h1 { font-size: 44px; margin: 0 0 8px; letter-spacing: -0.02em; }
+    .lead { font-size: 20px; color: var(--muted); margin: 0 0 40px; }
+    .downloads { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .download { display: block; padding: 22px 24px; border-radius: 16px; background: var(--accent);
+      color: #fff; text-decoration: none; font-weight: 600; font-size: 19px; }
+    .download small { display: block; font-weight: 400; font-size: 14px; opacity: 0.85; margin-top: 4px; }
+    .download:hover { filter: brightness(1.08); }
+    #version { color: var(--muted); font-size: 14px; margin: 14px 0 48px; }
+    h2 { font-size: 20px; margin: 40px 0 12px; }
+    .card { background: var(--card); border-radius: 16px; padding: 20px 24px; margin-bottom: 16px; }
+    .card h3 { margin: 0 0 8px; font-size: 17px; }
+    ol { margin: 0; padding-left: 22px; }
+    li { margin: 4px 0; }
+    code { font-size: 15px; }
+    footer { color: var(--muted); font-size: 14px; margin-top: 48px; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>SmartRead</h1>
+  <p class="lead">Označi tekst ili dio zaslona, pritisni prečac i dobij objašnjenje uz kontekst svoje knjige.</p>
+
+  <div class="downloads">
+    <a class="download" href="https://github.com/petar1432/smartread/releases/latest/download/SmartRead-Windows.zip">
+      Preuzmi za Windows<small>Windows 10 i 11, 64-bitni</small>
+    </a>
+    <a class="download" href="https://github.com/petar1432/smartread/releases/latest/download/SmartRead-macOS-AppleSilicon.zip">
+      Preuzmi za Mac<small>Apple Silicon (M1, M2, M3, M4…)</small>
+    </a>
+    <a class="download" href="https://github.com/petar1432/smartread/releases/latest/download/SmartRead-macOS-Intel.zip">
+      Preuzmi za Mac<small>Stariji Mac s Intel procesorom</small>
+    </a>
+  </div>
+  <p id="version"></p>
+
+  <h2>Pokretanje</h2>
+  <div class="card">
+    <h3>Windows</h3>
+    <ol>
+      <li>Desni klik na preuzeti zip → <b>Izdvoji sve</b>.</li>
+      <li>U izdvojenoj mapi pokreni <b>SmartRead.exe</b>.</li>
+      <li>Ako se pojavi „Windows je zaštitio vaš PC”, klikni <b>Više informacija → Ipak pokreni</b>.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>macOS</h3>
+    <ol>
+      <li>Ne znaš koji Mac imaš? Otvori izbornik Apple (gore lijevo) → <b>O ovom Macu</b>: piše „Čip Apple M…” ili „Procesor Intel”.</li>
+      <li>Otvori preuzeti zip i premjesti <b>SmartRead</b> u mapu <b>Programi</b> (Applications).</li>
+      <li>Pokreni SmartRead. macOS će javiti da ga ne može provjeriti, klikni <b>Gotovo</b>.</li>
+      <li>Otvori <b>Postavke sustava → Privatnost i sigurnost</b>, pri dnu klikni <b>Ipak otvori</b> uz SmartRead i potvrdi.</li>
+    </ol>
+  </div>
+
+  <h2>Prvo korištenje</h2>
+  <div class="card">
+    <ol>
+      <li>SmartRead se pojavi kao ikona u traci (dolje desno na Windowsu, gore desno na Macu) i otvori postavke.</li>
+      <li>Klikni <b>Nabavi besplatni ključ</b>, napravi ključ na Googleovoj stranici i zalijepi ga.</li>
+      <li>Odaberi knjigu ili dokument iz kojeg učiš.</li>
+      <li>Označi tekst i pritisni <code>Ctrl+Shift+E</code> (Mac: <code>Cmd+Shift+E</code>), a za dio zaslona <code>Ctrl+Shift+R</code> (Mac: <code>Cmd+Shift+R</code>).</li>
+    </ol>
+  </div>
+
+  <footer>Kad izađe nova verzija, SmartRead će ti to sam javiti.</footer>
+</main>
+<script>
+  fetch('version.json', { cache: 'no-store' })
+    .then((response) => response.json())
+    .then((versions) => { document.getElementById('version').textContent = 'Verzija ' + versions.latestVersion; })
+    .catch(() => {});
+</script>
+</body>
+</html>
