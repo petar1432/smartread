@@ -1,5 +1,5 @@
-# Started every morning by the private usage server (Cloudflare); can also be started by hand.
-# E-mails the author how SmartRead was used yesterday.
+# Started every evening at 23:00 Croatian time by the private usage server (Cloudflare); can also be started by hand.
+# E-mails the author how SmartRead was used today.
 name: Dnevni izvještaj o korištenju
 
 on:

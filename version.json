@@ -1,4 +1,5 @@
 {
-  "latestVersion": "1.0.0",
-  "minimumVersion": "1.0.0"
+  "latestVersion": "1.0.1",
+  "minimumVersion": "1.0.0",
+  "whatIsNew": "Odgovori umjetne inteligencije sada su još bolji: odmah objašnjavaju ono što si označio, a na upisana pitanja odgovaraju izravno."
 }

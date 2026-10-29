@@ -1,5 +1,5 @@
 """
-E-mails the author how SmartRead was used yesterday.
+E-mails the author how SmartRead was used today (sent at 23:00 Croatian time).
 Reads the summary from the private usage server, with the secret key that only the author has.
 
 Environment: STATS_URL, STATS_KEY, GMAIL_ADDRESS, GMAIL_APP_PASSWORD, NOTIFY_EMAIL.
@@ -17,8 +17,8 @@ def main() -> None:
     stats = read_stats()
     message = EmailMessage()
     message['Subject'] = (
-        f"SmartRead jučer: {stats['active_yesterday']} aktivnih, "
-        f"{stats['new_installations_yesterday']} novih instalacija"
+        f"SmartRead danas: {stats['active_today']} aktivnih, "
+        f"{stats['new_installations_today']} novih instalacija"
     )
     message['From'] = os.environ['GMAIL_ADDRESS']
     message['To'] = os.environ['NOTIFY_EMAIL']
@@ -40,10 +40,11 @@ def read_stats() -> dict:
 
 def build_text_of_email(stats: dict) -> str:
     return '\n'.join([
-        f"Korištenje SmartReada za {stats['yesterday']}:",
+        f"Korištenje SmartReada za {stats['today']}:",
         '',
-        f"  Aktivnih korisnika jučer:     {stats['active_yesterday']}  ({list_platforms(stats['active_yesterday_by_platform'])})",
-        f"  Novih instalacija jučer:      {stats['new_installations_yesterday']}",
+        f"  Aktivnih korisnika danas:     {stats['active_today']}  ({list_platforms(stats['active_today_by_platform'])})",
+        f"  Novih instalacija danas:      {stats['new_installations_today']}",
+        f"  Aktivnih jučer:               {stats['active_yesterday']}",
         f"  Aktivnih zadnjih 7 dana:      {stats['active_last_7_days']}",
         f"  Aktivnih zadnjih 30 dana:     {stats['active_last_30_days']}",
         f"  Instalacija ukupno:           {stats['installations_total']}",
