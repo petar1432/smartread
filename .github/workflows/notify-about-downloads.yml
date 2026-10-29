@@ -1,0 +1,50 @@
+# Every 30 minutes: compares download counts with the last check and e-mails the author about new downloads.
+# The counts of the last check are kept on the branch "download-stats", so the download page is not rebuilt.
+name: Obavijest o preuzimanjima
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: notify-about-downloads
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preuzmi skriptu
+        uses: actions/checkout@v4
+        with:
+          path: site
+
+      - name: Preuzmi brojeve zadnje provjere
+        run: |
+          if git ls-remote --exit-code --heads "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" download-stats; then
+            git clone --quiet --branch download-stats --single-branch "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" stats
+          else
+            mkdir stats && cd stats && git init --quiet -b download-stats
+            git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          fi
+
+      - name: Usporedi i pošalji e-mail
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: python3 site/.github/scripts/notify_about_downloads.py stats/download-counts.json
+
+      - name: Zapamti brojeve
+        working-directory: stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add download-counts.json
+          git diff --cached --quiet || git commit --quiet -m "Brojevi preuzimanja"
+          git push --quiet origin download-stats
