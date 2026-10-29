@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: '*/30 * * * *'
   workflow_dispatch:
+    inputs:
+      send_test_email:
+        description: 'Pošalji probni e-mail bez obzira na preuzimanja'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -38,6 +43,7 @@ jobs:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+          SEND_TEST_EMAIL: ${{ inputs.send_test_email }}
         run: python3 site/.github/scripts/notify_about_downloads.py stats/download-counts.json
 
       - name: Zapamti brojeve

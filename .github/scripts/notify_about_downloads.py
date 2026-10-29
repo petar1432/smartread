@@ -6,6 +6,7 @@ The counts from the last check are kept in the file given as the first argument.
 The first check only remembers the counts and sends nothing.
 
 Environment: GITHUB_TOKEN, GITHUB_REPOSITORY, GMAIL_ADDRESS, GMAIL_APP_PASSWORD, NOTIFY_EMAIL.
+With SEND_TEST_EMAIL=true, a test e-mail with the current counts is sent in any case.
 """
 import json
 import os
@@ -26,6 +27,9 @@ def main() -> None:
     path_of_last_counts = Path(sys.argv[1])
     current_counts = read_current_download_counts()
     last_counts = read_last_counts(path_of_last_counts)
+
+    if os.environ.get('SEND_TEST_EMAIL') == 'true':
+        send_email('SmartRead: probni e-mail', 'Obavijesti rade.\n\n' + build_text_of_totals(current_counts))
 
     if last_counts is not None:
         new_downloads = find_new_downloads(current_counts, last_counts)
@@ -69,11 +73,18 @@ def find_new_downloads(current_counts: dict[str, int], last_counts: dict[str, in
 
 def send_email_about(new_downloads: dict[str, int], current_counts: dict[str, int]) -> None:
     number_of_new_downloads = sum(new_downloads.values())
+    send_email(
+        f'SmartRead: {number_of_new_downloads} {word_for_downloads(number_of_new_downloads)}',
+        build_text_of_email(new_downloads, current_counts),
+    )
+
+
+def send_email(subject: str, text: str) -> None:
     message = EmailMessage()
-    message['Subject'] = f'SmartRead: {number_of_new_downloads} {word_for_downloads(number_of_new_downloads)}'
+    message['Subject'] = subject
     message['From'] = os.environ['GMAIL_ADDRESS']
     message['To'] = os.environ['NOTIFY_EMAIL']
-    message.set_content(build_text_of_email(new_downloads, current_counts))
+    message.set_content(text)
 
     with smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=30) as mail_server:
         mail_server.login(os.environ['GMAIL_ADDRESS'], os.environ['GMAIL_APP_PASSWORD'])
@@ -84,7 +95,11 @@ def build_text_of_email(new_downloads: dict[str, int], current_counts: dict[str,
     lines = ['Nova preuzimanja od zadnje provjere:', '']
     for release_and_file, count in sorted(new_downloads.items()):
         lines.append(f'  {describe(release_and_file)}: +{count}')
-    lines += ['', f'Ukupno preuzimanja svih verzija: {sum(current_counts.values())}', '']
+    return '\n'.join(lines) + '\n\n' + build_text_of_totals(current_counts)
+
+
+def build_text_of_totals(current_counts: dict[str, int]) -> str:
+    lines = [f'Ukupno preuzimanja svih verzija: {sum(current_counts.values())}', '']
     for release_and_file, count in sorted(current_counts.items()):
         lines.append(f'  {describe(release_and_file)}: {count}')
     lines += ['', 'https://github.com/petar1432/smartread/releases']
